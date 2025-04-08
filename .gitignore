@@ -5,8 +5,6 @@ __pycache__/
 *.so
 venv/
 env/
-.env
-.env.production
 
 # Django
 *.log
@@ -21,6 +19,9 @@ yarn-debug.log
 # IDE specific files
 .idea/
 .vscode/
+.env
+.env.production
+data/
 
 # OS specific
 .DS_Store
