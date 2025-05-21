@@ -64,6 +64,7 @@ h1 {
 main {
   width: 100%;
   animation: fadeIn 0.8s ease-in-out;
+  margin-bottom: 2rem;
 }
 
 .info-section {
@@ -122,6 +123,33 @@ footer {
   text-align: center;
   color: #6b7280;
   font-size: 0.9rem;
+}
+
+.main-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.main-nav button {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.main-nav button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.main-nav button.active {
+  background-color: rgba(255, 255, 255, 0.4);
+  font-weight: bold;
 }
 
 @keyframes fadeIn {

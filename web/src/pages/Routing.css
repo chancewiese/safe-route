@@ -1,0 +1,141 @@
+/* web/src/pages/Routing.css */
+.routing-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.routing-header {
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.location-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.location-inputs input {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.location-inputs input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  outline: none;
+}
+
+.location-inputs button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.location-inputs button:hover {
+  background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
+}
+
+.routing-main {
+  display: flex;
+  gap: 1.5rem;
+  height: 75vh;
+}
+
+.routing-sidebar {
+  width: 30%;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-tabs {
+  display: flex;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  overflow: hidden;
+}
+
+.panel-tabs button {
+  flex: 1;
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #f3f4f6;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.panel-tabs button:hover {
+  background-color: #e5e7eb;
+}
+
+.panel-tabs button.active {
+  background-color: white;
+  color: #6366f1;
+  font-weight: 600;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.panel-content {
+  flex: 1;
+  overflow-y: auto;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.routing-map {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .routing-main {
+    flex-direction: column-reverse;
+    height: auto;
+  }
+
+  .routing-sidebar {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .routing-map {
+    height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .location-inputs {
+    flex-direction: column;
+  }
+
+  .location-inputs input,
+  .location-inputs button {
+    width: 100%;
+  }
+}
