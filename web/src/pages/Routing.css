@@ -57,56 +57,36 @@
 .routing-main {
   display: flex;
   gap: 1.5rem;
-  height: 75vh;
 }
 
 .routing-sidebar {
-  width: 30%;
+  width: 300px;
   min-width: 300px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  height: fit-content;
+}
+
+.routing-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-}
-
-.panel-tabs {
-  display: flex;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-  overflow: hidden;
-}
-
-.panel-tabs button {
-  flex: 1;
-  padding: 0.75rem;
-  font-size: 1rem;
-  background-color: #f3f4f6;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  color: #4b5563;
-}
-
-.panel-tabs button:hover {
-  background-color: #e5e7eb;
-}
-
-.panel-tabs button.active {
-  background-color: white;
-  color: #6366f1;
-  font-weight: 600;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
-}
-
-.panel-content {
-  flex: 1;
-  overflow-y: auto;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
+  gap: 1.5rem;
 }
 
 .routing-map {
-  flex: 1;
+  width: 100%;
+  height: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.routing-summary {
+  width: 100%;
+  background: white;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -115,17 +95,12 @@
 /* Responsive adjustments */
 @media (max-width: 992px) {
   .routing-main {
-    flex-direction: column-reverse;
-    height: auto;
+    flex-direction: column;
   }
 
   .routing-sidebar {
     width: 100%;
     min-width: unset;
-  }
-
-  .routing-map {
-    height: 400px;
   }
 }
 
@@ -137,5 +112,9 @@
   .location-inputs input,
   .location-inputs button {
     width: 100%;
+  }
+
+  .routing-map {
+    height: 400px;
   }
 }
