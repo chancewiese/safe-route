@@ -14,7 +14,6 @@ const Settings = ({ settings, onSettingsChange }) => {
   const [expandedSections, setExpandedSections] = useState({
     priorities: true,
     routeType: true,
-    displayMode: true,
     advanced: false,
   });
 
@@ -45,6 +44,12 @@ const Settings = ({ settings, onSettingsChange }) => {
   const handleRadioChange = (e) => {
     const { name, value } = e.target;
     onSettingsChange({ [name]: value });
+  };
+
+  // Handle checkbox changes
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    onSettingsChange({ [name]: checked });
   };
 
   // Handle numeric input changes
@@ -206,59 +211,6 @@ const Settings = ({ settings, onSettingsChange }) => {
       <div className="settings-section">
         <div
           className="section-header"
-          onClick={() => toggleSection("displayMode")}
-        >
-          <h3>Display Mode</h3>
-          <span
-            className={`chevron ${
-              expandedSections.displayMode ? "expanded" : ""
-            }`}
-          >
-            ▼
-          </span>
-        </div>
-
-        {expandedSections.displayMode && (
-          <div className="section-content">
-            <div className="radio-group">
-              <label>
-                <input
-                  type="radio"
-                  name="displayMode"
-                  value="map"
-                  checked={settings.displayMode === "map"}
-                  onChange={handleRadioChange}
-                />
-                Map Only
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="displayMode"
-                  value="heatmap"
-                  checked={settings.displayMode === "heatmap"}
-                  onChange={handleRadioChange}
-                />
-                Crime Heatmap
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="displayMode"
-                  value="points"
-                  checked={settings.displayMode === "points"}
-                  onChange={handleRadioChange}
-                />
-                Crime Points
-              </label>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="settings-section">
-        <div
-          className="section-header"
           onClick={() => toggleSection("advanced")}
         >
           <h3>Advanced Settings</h3>
@@ -272,21 +224,47 @@ const Settings = ({ settings, onSettingsChange }) => {
         {expandedSections.advanced && (
           <div className="section-content">
             <div className="input-group">
-              <label htmlFor="pace">Your Pace (minutes per mile):</label>
-              <input
-                type="number"
-                id="pace"
-                name="pace"
-                min="5"
-                max="30"
-                step="0.1"
-                value={settings.pace}
-                onChange={handleNumberChange}
-                className="number-input"
-              />
-              <span className="input-hint">
-                Walking pace: ~18-20 min/mile, Running pace: ~8-12 min/mile
-              </span>
+              <div className="pace-toggle-group">
+                <label className="toggle-label">
+                  <input
+                    type="checkbox"
+                    name="accountForPace"
+                    checked={settings.accountForPace}
+                    onChange={handleCheckboxChange}
+                    className="pace-checkbox"
+                  />
+                  Account for pace
+                </label>
+              </div>
+
+              {settings.accountForPace && (
+                <div className="pace-input-group">
+                  <label htmlFor="pace">Your Pace (minutes per mile):</label>
+                  <input
+                    type="number"
+                    id="pace"
+                    name="pace"
+                    min="5"
+                    max="30"
+                    step="0.1"
+                    value={settings.pace}
+                    onChange={handleNumberChange}
+                    className="number-input"
+                  />
+                  <span className="input-hint">
+                    Walking pace: ~18-20 min/mile, Running pace: ~8-12 min/mile
+                  </span>
+                </div>
+              )}
+
+              {!settings.accountForPace && (
+                <div className="pace-disabled-info">
+                  <span className="pace-na-text">Pace: N/A</span>
+                  <span className="input-hint">
+                    Enable "Account for pace" to set your walking/running speed
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         )}

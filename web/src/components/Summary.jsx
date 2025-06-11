@@ -40,10 +40,17 @@ const Summary = ({ route, settings }) => {
 
             <div className="metric">
               <div className="metric-label">Est. Time</div>
-              <div className="metric-value">{route.duration} mins</div>
-              <div className="metric-details">
-                at {settings.pace} min/mile pace
+              <div className="metric-value">
+                {route.duration ? `${route.duration} mins` : "N/A"}
               </div>
+              {route.duration && (
+                <div className="metric-details">
+                  at {settings.pace} min/mile pace
+                </div>
+              )}
+              {!route.duration && (
+                <div className="metric-details">Enable pace in settings</div>
+              )}
             </div>
 
             <div className="metric">
@@ -90,7 +97,7 @@ const Summary = ({ route, settings }) => {
               </div>
               <div className="route-option-metrics">
                 <span>{route.distance} miles</span>
-                <span>{route.duration} mins</span>
+                <span>{route.duration ? `${route.duration} mins` : "N/A"}</span>
               </div>
             </div>
 
@@ -101,7 +108,7 @@ const Summary = ({ route, settings }) => {
               </div>
               <div className="route-option-metrics">
                 <span>2.1 miles</span>
-                <span>30 mins</span>
+                <span>{settings.accountForPace ? "30 mins" : "N/A"}</span>
               </div>
             </div>
 
@@ -112,7 +119,7 @@ const Summary = ({ route, settings }) => {
               </div>
               <div className="route-option-metrics">
                 <span>1.9 miles</span>
-                <span>32 mins</span>
+                <span>{settings.accountForPace ? "32 mins" : "N/A"}</span>
               </div>
             </div>
           </div>
