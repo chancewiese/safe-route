@@ -4,3 +4,8 @@ uvicorn==0.26.0
 pydantic==2.5.3
 pandas==2.2.0
 numpy==1.26.3
+
+# PostgreSQL Database dependencies (add these when ready)
+# psycopg2-binary==2.9.9    # PostgreSQL adapter for Python
+# sqlalchemy==2.0.25        # ORM for database operations
+# alembic==1.13.1           # Database migration tool
