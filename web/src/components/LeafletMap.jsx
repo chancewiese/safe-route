@@ -29,30 +29,120 @@ const LeafletMap = ({
   const [endMarker, setEndMarker] = useState(null);
   const [routeLine, setRouteLine] = useState(null);
   const [crimeHeatmap, setCrimeHeatmap] = useState(null);
+  const [crimeData, setCrimeData] = useState([]);
+
+  // Loading states
+  const [isMapLoading, setIsMapLoading] = useState(true);
+  const [isLoadingCrimeData, setIsLoadingCrimeData] = useState(false);
+  const [mapError, setMapError] = useState(null);
 
   // Initialize the map
   useEffect(() => {
     if (!mapRef.current || map) return;
 
-    // Create map centered on US
-    const leafletMap = L.map(mapRef.current).setView([39.8283, -98.5795], 4);
+    try {
+      console.log("Initializing map...");
+      setIsMapLoading(true);
 
-    // Add OpenStreetMap tiles
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19,
-    }).addTo(leafletMap);
+      // Create map centered on US
+      const leafletMap = L.map(mapRef.current).setView([39.8283, -98.5795], 4);
 
-    setMap(leafletMap);
+      // Add OpenStreetMap tiles
+      const tileLayer = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution:
+            '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 19,
+        }
+      );
+
+      // Handle tile loading
+      tileLayer.on("loading", () => {
+        console.log("Map tiles loading...");
+      });
+
+      tileLayer.on("load", () => {
+        console.log("Map tiles loaded!");
+        setIsMapLoading(false);
+        setMapError(null);
+      });
+
+      tileLayer.on("tileerror", (error) => {
+        console.error("Tile loading error:", error);
+        setMapError(
+          "Failed to load map tiles. Please check your internet connection."
+        );
+        setIsMapLoading(false);
+      });
+
+      tileLayer.addTo(leafletMap);
+      setMap(leafletMap);
+
+      // Set loading to false after a timeout as backup
+      setTimeout(() => {
+        setIsMapLoading(false);
+      }, 5000);
+    } catch (error) {
+      console.error("Error initializing map:", error);
+      setMapError("Failed to initialize map. Please refresh the page.");
+      setIsMapLoading(false);
+    }
 
     // Cleanup function
     return () => {
-      if (leafletMap) {
-        leafletMap.remove();
+      if (map) {
+        map.remove();
       }
     };
   }, []);
+
+  // Fetch real crime data from API
+  const fetchCrimeData = async () => {
+    setIsLoadingCrimeData(true);
+    try {
+      console.log("Fetching crime data from API...");
+      const response = await fetch("/api/crime-data");
+
+      if (!response.ok) {
+        throw new Error(`API responded with status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Crime data received:", data);
+
+      if (data.crimeData && Array.isArray(data.crimeData)) {
+        setCrimeData(data.crimeData);
+        console.log(`Loaded ${data.crimeData.length} crime points`);
+      } else {
+        console.warn("No crime data in API response");
+        setCrimeData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching crime data:", error);
+
+      // Fallback to mock data if API fails
+      const mockCrimeData = [
+        { lat: 34.0522, lng: -118.2437, weight: 8 },
+        { lat: 34.0622, lng: -118.2537, weight: 6 },
+        { lat: 34.0422, lng: -118.2337, weight: 9 },
+        { lat: 34.0722, lng: -118.2637, weight: 4 },
+        { lat: 34.0822, lng: -118.2737, weight: 7 },
+        { lat: 34.0322, lng: -118.2237, weight: 5 },
+      ];
+      setCrimeData(mockCrimeData);
+      console.log("Using fallback mock data");
+    } finally {
+      setIsLoadingCrimeData(false);
+    }
+  };
+
+  // Load crime data when map is ready
+  useEffect(() => {
+    if (map && !isMapLoading) {
+      fetchCrimeData();
+    }
+  }, [map, isMapLoading]);
 
   // Handle location search (simple geocoding with Nominatim)
   const searchLocation = async (query, type) => {
@@ -76,7 +166,6 @@ const LeafletMap = ({
 
         // Add marker
         if (type === "start") {
-          // Remove existing start marker
           if (startMarker) {
             map.removeLayer(startMarker);
           }
@@ -93,11 +182,8 @@ const LeafletMap = ({
 
           marker.bindPopup("Start Location").openPopup();
           setStartMarker(marker);
-
-          // Center map on location
           map.setView([lat, lng], 13);
         } else if (type === "end") {
-          // Remove existing end marker
           if (endMarker) {
             map.removeLayer(endMarker);
           }
@@ -192,7 +278,11 @@ const LeafletMap = ({
 
   // Display crime data based on settings
   useEffect(() => {
-    if (!map) return;
+    if (!map || !crimeData.length) return;
+
+    console.log(
+      `Displaying ${crimeData.length} crime points in ${settings.displayMode} mode`
+    );
 
     // Remove existing crime visualization
     if (crimeHeatmap) {
@@ -205,46 +295,42 @@ const LeafletMap = ({
       settings.displayMode === "heatmap" ||
       settings.displayMode === "points"
     ) {
-      // Mock crime data for demonstration
-      const mockCrimeData = [
-        { lat: 34.0522, lng: -118.2437, intensity: 0.8 },
-        { lat: 34.0622, lng: -118.2537, intensity: 0.6 },
-        { lat: 34.0422, lng: -118.2337, intensity: 0.9 },
-        { lat: 34.0722, lng: -118.2637, intensity: 0.4 },
-        { lat: 34.0822, lng: -118.2737, intensity: 0.7 },
-        { lat: 34.0322, lng: -118.2237, intensity: 0.5 },
-      ];
-
       if (settings.displayMode === "heatmap") {
-        // Show as heatmap - requires leaflet.heat plugin
-        // For now, we'll simulate with colored circles
-        const heatmapMarkers = mockCrimeData.map((crime) =>
-          L.circle([crime.lat, crime.lng], {
-            radius: 200 * crime.intensity,
+        // Show as heatmap - using colored circles
+        const heatmapMarkers = crimeData.map((crime) => {
+          const maxWeight = Math.max(...crimeData.map((c) => c.weight));
+          const intensity = crime.weight / maxWeight;
+
+          return L.circle([crime.lat, crime.lng], {
+            radius: 200 + 300 * intensity,
             fillColor:
-              crime.intensity > 0.7
+              intensity > 0.7
                 ? "#ef4444"
-                : crime.intensity > 0.5
+                : intensity > 0.4
                 ? "#f59e0b"
                 : "#eab308",
             color: "transparent",
             weight: 0,
             opacity: 0,
-            fillOpacity: 0.3 + crime.intensity * 0.4,
-          })
-        );
+            fillOpacity: 0.3 + intensity * 0.4,
+          }).bindPopup(`Crime Weight: ${crime.weight}`);
+        });
 
         const heatmapGroup = L.layerGroup(heatmapMarkers).addTo(map);
         setCrimeHeatmap(heatmapGroup);
+        console.log(`Added ${heatmapMarkers.length} heatmap circles`);
       } else if (settings.displayMode === "points") {
         // Show as individual points
-        const crimeMarkers = mockCrimeData.map((crime) =>
-          L.circleMarker([crime.lat, crime.lng], {
-            radius: 8,
+        const crimeMarkers = crimeData.map((crime) => {
+          const maxWeight = Math.max(...crimeData.map((c) => c.weight));
+          const intensity = crime.weight / maxWeight;
+
+          return L.circleMarker([crime.lat, crime.lng], {
+            radius: 6 + 8 * intensity,
             fillColor:
-              crime.intensity > 0.7
+              intensity > 0.7
                 ? "#ef4444"
-                : crime.intensity > 0.5
+                : intensity > 0.4
                 ? "#f59e0b"
                 : "#eab308",
             color: "#000",
@@ -252,18 +338,53 @@ const LeafletMap = ({
             opacity: 1,
             fillOpacity: 0.8,
           }).bindPopup(
-            `Crime Intensity: ${(crime.intensity * 100).toFixed(0)}%`
-          )
-        );
+            `Crime Weight: ${crime.weight}<br/>Intensity: ${(
+              intensity * 100
+            ).toFixed(0)}%`
+          );
+        });
 
         const crimeGroup = L.layerGroup(crimeMarkers).addTo(map);
         setCrimeHeatmap(crimeGroup);
+        console.log(`Added ${crimeMarkers.length} crime point markers`);
       }
     }
-  }, [settings.displayMode, map]);
+  }, [settings.displayMode, map, crimeData]);
 
   return (
     <div className="leaflet-map-container">
+      {/* Loading Overlay */}
+      {(isMapLoading || isLoadingCrimeData) && (
+        <div className="map-loading-overlay">
+          <div className="loading-content">
+            <div className="loading-spinner"></div>
+            <p className="loading-text">
+              {isMapLoading ? "Loading map..." : "Loading crime data..."}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Error Overlay */}
+      {mapError && (
+        <div className="map-error-overlay">
+          <div className="error-content">
+            <div className="error-icon">⚠️</div>
+            <p className="error-text">{mapError}</p>
+            <button
+              className="retry-button"
+              onClick={() => {
+                setMapError(null);
+                setIsMapLoading(true);
+                window.location.reload();
+              }}
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Map Container */}
       <div ref={mapRef} className="leaflet-map" />
 
@@ -302,6 +423,9 @@ const LeafletMap = ({
               }}
             />
             Crime Heatmap
+            {isLoadingCrimeData && (
+              <span className="loading-indicator">⏳</span>
+            )}
           </label>
           <label>
             <input
@@ -318,7 +442,28 @@ const LeafletMap = ({
               }}
             />
             Crime Points
+            {crimeData.length > 0 && (
+              <span className="data-count">({crimeData.length})</span>
+            )}
+            {isLoadingCrimeData && (
+              <span className="loading-indicator">⏳</span>
+            )}
           </label>
+        </div>
+
+        {/* Status Info */}
+        <div className="status-info">
+          {isMapLoading && (
+            <span className="status-text">Initializing map...</span>
+          )}
+          {isLoadingCrimeData && (
+            <span className="status-text">Loading crime data...</span>
+          )}
+          {!isMapLoading && !isLoadingCrimeData && crimeData.length > 0 && (
+            <span className="status-text">
+              Ready ({crimeData.length} data points)
+            </span>
+          )}
         </div>
       </div>
     </div>
