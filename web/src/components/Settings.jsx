@@ -67,7 +67,7 @@ const Settings = ({ settings, onSettingsChange }) => {
           className="section-header"
           onClick={() => toggleSection("priorities")}
         >
-          <h3>Priority Sliders</h3>
+          <h3>Priority Sliders (developing)</h3>
           <span
             className={`chevron ${
               expandedSections.priorities ? "expanded" : ""
@@ -160,7 +160,7 @@ const Settings = ({ settings, onSettingsChange }) => {
           className="section-header"
           onClick={() => toggleSection("routeType")}
         >
-          <h3>Route Type</h3>
+          <h3>Route Type (developing)</h3>
           <span
             className={`chevron ${
               expandedSections.routeType ? "expanded" : ""
@@ -213,7 +213,7 @@ const Settings = ({ settings, onSettingsChange }) => {
           className="section-header"
           onClick={() => toggleSection("advanced")}
         >
-          <h3>Advanced Settings</h3>
+          <h3>Advanced Settings (developing)</h3>
           <span
             className={`chevron ${expandedSections.advanced ? "expanded" : ""}`}
           >
