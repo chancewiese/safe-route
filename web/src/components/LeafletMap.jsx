@@ -289,6 +289,7 @@ const LeafletMap = ({
           </label>
           <label>
             <input
+              disabled
               type="radio"
               name="displayMode"
               value="heatmap"
@@ -305,6 +306,7 @@ const LeafletMap = ({
           </label>
           <label>
             <input
+              disabled
               type="radio"
               name="displayMode"
               value="points"
