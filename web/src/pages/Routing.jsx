@@ -159,20 +159,38 @@ const Routing = () => {
     <div className="routing-container">
       <div className="routing-header">
         <div className="location-inputs">
-          <input
-            ref={startInputRef}
-            type="text"
-            placeholder="Enter starting location (e.g., Los Angeles, CA)"
-            value={locations.start}
-            onChange={(e) => handleLocationChange("start", e.target.value)}
-          />
-          <input
-            ref={endInputRef}
-            type="text"
-            placeholder="Enter destination (e.g., Santa Monica, CA)"
-            value={locations.end}
-            onChange={(e) => handleLocationChange("end", e.target.value)}
-          />
+          <div className="input-with-button">
+            <input
+              ref={startInputRef}
+              type="text"
+              placeholder="Enter starting location (e.g., Weber State University, Ogden UT)"
+              value={locations.start}
+              onChange={(e) => handleLocationChange("start", e.target.value)}
+            />
+            <button
+              className="pin-drop-button"
+              title="Drop pin on map for start location"
+              onClick={() => handlePinDropClick("start")}
+            >
+              📍
+            </button>
+          </div>
+          <div className="input-with-button">
+            <input
+              ref={endInputRef}
+              type="text"
+              placeholder="Enter destination (e.g., Ogden City Mall, Ogden UT)"
+              value={locations.end}
+              onChange={(e) => handleLocationChange("end", e.target.value)}
+            />
+            <button
+              className="pin-drop-button"
+              title="Drop pin on map for destination"
+              onClick={() => handlePinDropClick("end")}
+            >
+              📍
+            </button>
+          </div>
           <button onClick={generateRoute} disabled={isLoading}>
             {isLoading ? "Loading..." : "Find Safe Route"}
           </button>

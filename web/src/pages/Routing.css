@@ -20,9 +20,16 @@
   align-items: center;
 }
 
-.location-inputs input {
+.input-with-button {
   flex: 1;
   min-width: 200px;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.location-inputs input {
+  flex: 1;
   padding: 0.75rem 1rem;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
@@ -36,7 +43,32 @@
   outline: none;
 }
 
-.location-inputs button {
+.pin-drop-button {
+  padding: 0.75rem;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pin-drop-button:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.pin-drop-button:active {
+  transform: translateY(0);
+}
+
+.location-inputs > button {
   padding: 0.75rem 1.5rem;
   background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
   color: white;
@@ -46,9 +78,10 @@
   font-weight: bold;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  white-space: nowrap;
 }
 
-.location-inputs button:hover {
+.location-inputs > button:hover {
   background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
@@ -109,8 +142,8 @@
     flex-direction: column;
   }
 
-  .location-inputs input,
-  .location-inputs button {
+  .input-with-button,
+  .location-inputs > button {
     width: 100%;
   }
 
